@@ -1,0 +1,47 @@
+{
+  "account_no": "",
+  "is_mock": true,
+  "trading_mode": "MOCK",
+  "mock_credentials": {
+    "app_key": "",
+    "app_secret": ""
+  },
+  "real_credentials": {
+    "app_key": "",
+    "app_secret": ""
+  },
+  "watch_stocks": [
+    {
+      "code": "005930",
+      "name": "삼성전자"
+    },
+    {
+      "code": "000660",
+      "name": "SK하이닉스"
+    }
+  ],
+  "held_positions": [],
+
+  "trading_fees": {
+    "buy_fee_rate": 0.00015,
+    "sell_fee_rate": 0.00015,
+    "tax_rate": 0.0018
+  },
+  "risk_management": {
+    "cooldown_minutes": 5,
+    "max_daily_trades_per_stock": 3,
+    "max_daily_trades_account": 10,
+    "kill_switch": false
+  },
+  "telegram": {
+    "enabled": false,
+    "bot_token": "",
+    "chat_id": ""
+  },
+  "dashboard": {
+    "host": "0.0.0.0",
+    "port": 8080,
+    "username": "admin",
+    "password": ""
+  }
+}

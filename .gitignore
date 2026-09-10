@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+*.db
+test_*.db
+web_magictrader.db
+*.lock
+.env
+trading_bot/data/
+*token_cache*.json
+backup_*/
