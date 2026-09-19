@@ -641,18 +641,24 @@ class SQLiteStorage:
         def _op():
             with self._get_connection() as conn:
                 cursor = conn.cursor()
-                for item in levels_data:
-                    cursor.execute("""
-                    UPDATE grid_levels
-                    SET status = ?, buy_order_id = ?, sell_order_id = ?, filled_qty = ?, remaining_qty = ?, updated_at = ?
-                    WHERE level_id = ?
-                    """, (
-                        item.get("status", "IDLE"),
-                        item.get("buy_order_id", ""),
-                        item.get("sell_order_id", ""),
-                        item.get("filled_qty", 0),
-                        item.get("remaining_qty", 0),
-                        now_str,
-                        item.get("level_id")
-                    ))
+                cursor.execute("BEGIN TRANSACTION;")
+                try:
+                    for item in levels_data:
+                        cursor.execute("""
+                        UPDATE grid_levels
+                        SET status = ?, buy_order_id = ?, sell_order_id = ?, filled_qty = ?, remaining_qty = ?, updated_at = ?
+                        WHERE level_id = ?
+                        """, (
+                            item.get("status", "IDLE"),
+                            item.get("buy_order_id", ""),
+                            item.get("sell_order_id", ""),
+                            item.get("filled_qty", 0),
+                            item.get("remaining_qty", 0),
+                            now_str,
+                            item.get("level_id")
+                        ))
+                    cursor.execute("COMMIT;")
+                except Exception as e:
+                    cursor.execute("ROLLBACK;")
+                    raise e
         self._execute_with_retry(_op)

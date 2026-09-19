@@ -17,8 +17,10 @@ try:
 except ImportError:
     pass
 
-BASE_DIR = Path(__file__).resolve().parents[1]
-DEFAULT_CONFIG_PATH = BASE_DIR / "trading_bot" / "config.json"
+BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+DEFAULT_CONFIG_PATH = os.path.join(BASE_DIR, "config.json")
+DB_PATH = os.path.join(BASE_DIR, "web_magictrader.db")
+TOKEN_CACHE_PATH = os.path.join(BASE_DIR, "kiwoom_token.json")
 
 
 def get_kst_now() -> datetime.datetime:
@@ -99,10 +101,10 @@ class Config:
 
     # 5. System State & Persistence File Paths
     STATE_FILE_PATH: str = os.getenv(
-        "STATE_FILE_PATH", str(BASE_DIR / "trading_bot" / "data" / "grid_state.json")
+        "STATE_FILE_PATH", os.path.join(BASE_DIR, "grid_state.json")
     )
-    DB_PATH: str = str(BASE_DIR / "trading_bot" / "data" / "magictrader.db")
-    TOKEN_CACHE_PATH: str = str(BASE_DIR / "trading_bot" / "data" / "token_cache.json")
+    DB_PATH: str = os.getenv("DB_PATH", DB_PATH)
+    TOKEN_CACHE_PATH: str = os.getenv("TOKEN_CACHE_PATH", TOKEN_CACHE_PATH)
 
     # 6. Risk Controls
     MAX_DAILY_TRADES: int = int(os.getenv("MAX_DAILY_TRADES", "30"))
@@ -153,7 +155,7 @@ class Config:
         cls.GRID_COUNT = cls.GRID_LEVELS
         cls.AMOUNT_PER_LEVEL = int(os.getenv("ORDER_AMOUNT_KRW") or os.getenv("AMOUNT_PER_LEVEL", "100000"))
         cls.ORDER_AMOUNT_KRW = cls.AMOUNT_PER_LEVEL
-        cls.STATE_FILE_PATH = os.getenv("STATE_FILE_PATH", str(BASE_DIR / "trading_bot" / "data" / "grid_state.json"))
+        cls.STATE_FILE_PATH = os.getenv("STATE_FILE_PATH", os.path.join(BASE_DIR, "grid_state.json"))
         cls.TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
         cls.TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "").strip()
         cls.TELEGRAM_ENABLED = bool(cls.TELEGRAM_BOT_TOKEN and cls.TELEGRAM_CHAT_ID)
@@ -196,7 +198,7 @@ class SystemSettings:
     Unified settings loader reading from environment variables and config.json.
     """
     def __init__(self, config_path: Optional[str] = None):
-        self.config_path = Path(config_path) if config_path else DEFAULT_CONFIG_PATH
+        self.config_path = Path(config_path) if config_path else Path(DEFAULT_CONFIG_PATH)
         self._data: Dict[str, Any] = self._load_config()
 
     def _load_config(self) -> Dict[str, Any]:

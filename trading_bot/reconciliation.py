@@ -1,6 +1,5 @@
 import time
 from typing import Dict, Any, List, Tuple, Optional
-from db_manager import DBManager
 
 class ReconciliationError(RuntimeError):
     """DB와 키움 실계좌 잔고/포지션 불일치 시 발생하는 예외"""
@@ -11,7 +10,7 @@ class AccountReconciler:
     Kiwoom API(Source of Truth)와 DB 간의 계좌 잔고, 포지션, 미체결 불일치 감지 및 동기화
     """
 
-    def __init__(self, db: DBManager):
+    def __init__(self, db: Any):
         self.db = db
 
     def reconcile_account(self, kiwoom_client: Any, trading_mode: str = "MOCK") -> Tuple[bool, Dict[str, Any]]:

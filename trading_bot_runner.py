@@ -270,6 +270,8 @@ def run_trading_bot_daemon(interval: float = 2.5, run_once: bool = False, db: Op
 
                 if engine.status == "RUNNING":
                     if in_market:
+                        if engine.order_manager and engine.kiwoom_client:
+                            engine.order_manager.resolve_unknown_orders(engine.kiwoom_client)
                         engine.sync_market_prices()
                         engine.evaluate_grid_cycle()
 

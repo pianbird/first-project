@@ -548,7 +548,7 @@ class WebTradingEngine:
                 if str(p_order.get("stock_code", "")).strip().zfill(6) == code:
                     p_status = str(p_order.get("status", ""))
                     p_rem = int(p_order.get("remaining_qty") or p_order.get("leaves_qty") or 0)
-                    if p_status in ["PARTIALLY_FILLED", "PENDING_SUBMIT", "SUBMITTED", "ACCEPTED", "OPEN"] and p_rem > 0:
+                    if p_status in ["PENDING_SUBMIT", "SUBMITTED", "ACCEPTED", "OPEN", "UNKNOWN_PENDING"] and p_rem > 0:
                         has_unfilled_leaves = True
                         break
             if has_unfilled_leaves:
@@ -1233,7 +1233,7 @@ class WebTradingEngine:
             if not can_trade:
                 msg = f"🛑 [수동 주문 차단] 리스크 가드: {risk_msg}"
                 self.db.add_log("WARNING", msg)
-                return {"success": False, "message": msg}
+                return {"success": False, "message": msg, "error": msg}
 
         # 2. 키움 REST API 주문 전송 (OrderManager 단일 주문 경로 통과)
         if self.order_manager and self.kiwoom_client:

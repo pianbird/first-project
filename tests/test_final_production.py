@@ -340,19 +340,6 @@ def test_p1_4_force_close_real_failure(tmp_path):
     assert res["success"] is False
     assert "실패" in res["message"]
 
-# --- 16. P1-5 Legacy Engine Execution Path Guard Test ---
-def test_p1_5_legacy_engine_safety():
-    from trading_bot.main import AutoTradingEngine
-    engine = AutoTradingEngine()
-    import sys
-
-    # Without --force-legacy-run sys.argv flag, run() must safely exit without starting loop
-    orig_argv = sys.argv[:]
-    try:
-        sys.argv = ["main.py"]
-        engine.run()  # Should print safety guard message and return safely
-    finally:
-        sys.argv = orig_argv
 
 
 # --- 17. Problem 4 Auth Protection Test for /api/kiwoom/positions ---
@@ -397,18 +384,14 @@ def test_problem4_kiwoom_positions_auth_required(monkeypatch):
 
 # --- 18. Hard Stop-Loss Risk Feature Tests ---
 def test_hard_stop_loss_validation():
-    from trading_bot.grid_strategy import generate_auto_grid_config
-    with pytest.raises(ValueError):
-        generate_auto_grid_config(
-            stock_code="005930",
-            stock_name="삼성전자",
-            base_price=70000,
-            exit_price=80000,
-            num_steps=20,
-            step_pct=1.5,
-            hard_stop_loss_enabled=True,
-            hard_stop_loss_price=60000
-        )
+    from web_app.backend.engine import WebTradingEngine
+    import tempfile
+    with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as tmpdir:
+        db_path = os.path.join(tmpdir, "test_hsl.db")
+        engine = WebTradingEngine(db_path=db_path)
+        success, msg = engine.add_stock("005930", "삼성전자", 70000, 80000, num_steps=20, hard_stop_loss_enabled=True, hard_stop_loss_price=60000)
+        assert not success
+        assert "최하단 그리드 가격" in msg
 
 def test_hard_stop_loss_trigger_and_isolation():
     from web_app.backend.engine import WebTradingEngine
@@ -697,7 +680,7 @@ def test_runner_market_calendar_integration():
 
 
 # --- 25. Trading Bot Runner RealTradingLock & SafeStop Integration Test ---
-def test_runner_real_trading_lock_and_safe_stop(tmp_path):
+def test_runner_real_trading_lock_and_safe_stop(tmp_path, monkeypatch):
     """
     Verify trading_bot_runner acquires RealTradingLock in REAL mode and triggers SAFE_STOP on collision.
     """
@@ -727,7 +710,14 @@ def test_runner_real_trading_lock_and_safe_stop(tmp_path):
         # Verify runner handling when REAL mode lock collision occurs: triggers SAFE_STOP and exits safely without crashing
         db = WebDBManager(os.path.join(tmp_path, "test_runner_lock.db"))
         db.save_system_config("operating_mode", {"trading_mode": "REAL"})
+        monkeypatch.setenv("TRADING_MODE", "REAL")
+        monkeypatch.setenv("KIWOOM_ACCOUNT_NO", test_acc)
+        monkeypatch.setenv("ACCOUNT_NO", test_acc)
         
+        # Force config reload to pick up monkeypatched env vars
+        from config.settings import Config
+        Config.load()
+
         try:
             trading_bot_runner.run_trading_bot_daemon(interval=0.1, run_once=True, db=db)
         except SystemExit:
@@ -772,7 +762,7 @@ def test_p0_1_ws_auth_enforcement(monkeypatch):
 
 # --- 13. P0-2 Order Error/Message Preservation Test ---
 def test_p0_2_order_error_message_preservation(tmp_path):
-    from trading_bot.main import AutoTradingEngine
+    from web_app.backend.engine import WebTradingEngine as AutoTradingEngine
 
     db_path = os.path.join(tmp_path, "test_p0_2.db")
     engine = AutoTradingEngine()

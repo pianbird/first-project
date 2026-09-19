@@ -1,0 +1,74 @@
+{
+  "stock_code": "005930",
+  "updated_at": "2026-09-19 09:30:22",
+  "is_reconciled": false,
+  "levels": [
+    {
+      "level_id": 1,
+      "buy_price": 50000,
+      "sell_price": 50700,
+      "qty": 2,
+      "order_qty": 2,
+      "filled_qty": 0,
+      "remaining_qty": 2,
+      "status": "ORDER_PLACED",
+      "buy_order_id": "ORD_1001",
+      "sell_order_id": "",
+      "last_order_time": 1789777822.1700993
+    },
+    {
+      "level_id": 2,
+      "buy_price": 52000,
+      "sell_price": 52700,
+      "qty": 1,
+      "order_qty": 1,
+      "filled_qty": 0,
+      "remaining_qty": 0,
+      "status": "UNKNOWN_PENDING",
+      "buy_order_id": "",
+      "sell_order_id": "",
+      "last_order_time": 1789777822.9593022
+    },
+    {
+      "level_id": 3,
+      "buy_price": 54000,
+      "sell_price": 54800,
+      "qty": 1,
+      "order_qty": 1,
+      "filled_qty": 0,
+      "remaining_qty": 0,
+      "status": "UNKNOWN_PENDING",
+      "buy_order_id": "",
+      "sell_order_id": "",
+      "last_order_time": 1789777822.9702604
+    },
+    {
+      "level_id": 4,
+      "buy_price": 56000,
+      "sell_price": 56800,
+      "qty": 1,
+      "order_qty": 1,
+      "filled_qty": 0,
+      "remaining_qty": 0,
+      "status": "UNKNOWN_PENDING",
+      "buy_order_id": "",
+      "sell_order_id": "",
+      "last_order_time": 1789777822.9800317
+    },
+    {
+      "level_id": 5,
+      "buy_price": 58000,
+      "sell_price": 58800,
+      "qty": 1,
+      "order_qty": 1,
+      "filled_qty": 0,
+      "remaining_qty": 0,
+      "status": "UNKNOWN_PENDING",
+      "buy_order_id": "",
+      "sell_order_id": "",
+      "last_order_time": 1789777822.9911044
+    }
+  ],
+  "active_orders": [],
+  "positions": []
+}
